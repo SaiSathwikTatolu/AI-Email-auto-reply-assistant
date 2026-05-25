@@ -1,0 +1,262 @@
+{
+  "name": "AI Auto-Email reply automation copy",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        432,
+        32
+      ],
+      "id": "9807c176-96b4-43d7-9bc8-bb0661f1a520",
+      "name": "Gmail Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Customer Subject:\n{{ $('Gmail Trigger').item.json.Subject.replace(/^Re:\\s*/i, '') }}\n\nCustomer Inquiry:\n{{ $json['Customer Inequiry'] }}\n\nGenerate a professional business email reply.",
+        "options": {
+          "systemMessage": "You are an AI assistant for Vertex Automation Systems.\n\nCompany Services:\n\n* AI Chatbot Development\n* AI Customer Support Bots\n* Workflow Automation\n* Business Automation Systems\n* AI Resume Analyzer Systems\n* Professional Website Creation\n* Website Automation Integrations\n* WhatsApp Automations\n* Lead Generation Systems\n* AI Email Automation Systems\n* Voice Assistants for Customer Support\n\nPricing Guidelines:\n\n* Small automation projects: ₹3k–₹5k\n* Medium automation systems: ₹8k–₹15k\n* Advanced AI systems: ₹20k+\n\nContact Information:\n\n* Business Name: Vertex Automation Systems\n* Email: vertexautomationsystems@gmail.com\n* WhatsApp: +91 9876543218\n\nRules:\n\n* Reply professionally and clearly\n* Keep responses concise and business-oriented\n* Never promise exact pricing\n* Provide only estimated pricing ranges\n* Mention relevant services based on customer inquiry\n* If customer asks about pricing, explain that pricing depends on complexity, integrations, features, and requirements\n* Encourage consultation for accurate estimation\n* If customer wants to continue, ask them to reply to the email or contact through WhatsApp\n* Mention WhatsApp contact naturally near the ending of the email\n* End every email professionally with:\n\nBest regards,\nVertex Automation Systems\n\nFor further discussion, feel free to reply to this email or contact us on WhatsApp at +91 XXXXX XXXXX.\n\n* Return only the email reply body\n* Do NOT include markdown\n* Do NOT include explanations outside the email\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        768,
+        -16
+      ],
+      "id": "4961c0c4-0e70-46db-8705-85163dc13e63",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "26d2e411-c2f6-41c7-8aa7-8ed267309986",
+              "name": "Customer Inequiry",
+              "value": "={{ $json.snippet }}",
+              "type": "string"
+            },
+            {
+              "id": "528f2558-23ac-4ef7-b2f1-a3d3ba0dce0a",
+              "name": "Subject",
+              "value": "={{ $json.Subject }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        608,
+        96
+      ],
+      "id": "9b1dc1cd-9012-4436-88a0-c4f442416d0a",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        816,
+        176
+      ],
+      "id": "3ae410db-ee42-47b6-b0d2-b7963cd4ad57",
+      "name": "Google Gemini Chat Model"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "745fa141-7f88-4269-b8ee-b7df262e3a74",
+              "name": "Customer Inequiry",
+              "value": "={{ $('Edit Fields').item.json['Customer Inequiry'] }}",
+              "type": "string"
+            },
+            {
+              "id": "bea8ed9b-8dbc-4b09-83ec-4355ac8793a6",
+              "name": "Subject",
+              "value": "=",
+              "type": "string"
+            },
+            {
+              "id": "ce0e1ab4-956d-4ab3-8fe5-c20f300f4e23",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "282994de-5b23-47d9-ba80-761f20d164e3",
+              "name": "To",
+              "value": "={{ $('Gmail Trigger').item.json.From }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1072,
+        48
+      ],
+      "id": "184bb2c8-4c10-45ce-ad7a-4b6a4f8fb56a",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Gmail Trigger').item.json.From }}",
+        "subject": "Vertex Automation Systems",
+        "message": "=<!DOCTYPE html>\n<html>\n\n<head>\n  <style>\n    body {\n      font-family: Arial, sans-serif;\n      background: #f4f4f4;\n      padding: 20px;\n      color: #333;\n    }\n\n    .container {\n      max-width: 650px;\n      background: #ffffff;\n      margin: auto;\n      padding: 35px;\n      border-radius: 12px;\n      border: 1px solid #ddd;\n    }\n\n    .header {\n      text-align: center;\n      margin-bottom: 30px;\n    }\n\n    .header h1 {\n      color: #2563eb;\n      margin: 0;\n      font-size: 32px;\n    }\n\n    .content {\n      line-height: 1.8;\n      font-size: 16px;\n    }\n\n    .reply-box {\n      background: #f8fafc;\n      border-left: 5px solid #2563eb;\n      padding: 20px;\n      margin-top: 20px;\n      border-radius: 8px;\n      white-space: pre-line;\n    }\n\n    .services {\n      background: #f9fafb;\n      padding: 20px;\n      border-radius: 8px;\n      margin-top: 30px;\n      border: 1px solid #e5e7eb;\n    }\n\n    .services h3 {\n      margin-top: 0;\n      color: #111827;\n    }\n\n    .services ul {\n      padding-left: 20px;\n      line-height: 2;\n    }\n\n    .footer {\n      margin-top: 35px;\n      font-size: 14px;\n      color: #666;\n      border-top: 1px solid #eee;\n      padding-top: 20px;\n    }\n\n    .highlight {\n      color: #2563eb;\n      font-weight: bold;\n    }\n  </style>\n</head>\n\n<body>\n\n  <div class=\"container\">\n\n    <div class=\"header\">\n      <h1>Vertex Automation Systems</h1>\n    </div>\n\n    <div class=\"content\">\n\n      <p>Hello,</p>\n\n      <p>\n        Thank you for contacting us regarding your business requirements.\n      </p>\n\n      <p>\n        We reviewed your enquiry and generated the following response:\n      </p>\n\n      <div class=\"reply-box\">\n        {{ $json.output }}\n      </div>\n\n      <div class=\"services\">\n\n        <h3>Our Services</h3>\n\n        <ul>\n          <li>AI Chatbot Development</li>\n          <li>AI Customer Support Bots</li>\n          <li>Voice Assistants for Business Support</li>\n          <li>Workflow & Business Automations</li>\n          <li>Professional Website Design & Development</li>\n          <li>WhatsApp Automation Systems</li>\n          <li>Lead Generation Systems</li>\n          <li>AI Email Automation Systems</li>\n          <li>AI Resume Analyzer Systems</li>\n        </ul>\n\n      </div>\n\n      <p>\n        If you would like a detailed consultation or project estimation,\n        feel free to reply to this email.\n      </p>\n\n      <p class=\"highlight\">\n        We would be happy to help automate and scale your business operations.\n      </p>\n\n      <div class=\"footer\">\n\n        Best Regards,<br><br>\n        <strong>Vertex Automation Systems</strong>\n\n      </div>\n\n    </div>\n\n  </div>\n\n</body>\n\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1232,
+        112
+      ],
+      "id": "b65ba52e-ea3b-44a2-9229-3cb66b0f2c28",
+      "name": "Send a message",
+      "webhookId": "df363d4a-5965-451f-bb15-5a01bb722323"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1408,
+        32
+      ],
+      "id": "a9a7dde0-42f0-4331-9e63-be3daae7fd65",
+      "name": "Append row in sheet"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "0340ec13-b6ae-4f1d-9e12-880b4351dec7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1d6a4d78a992d6d570efc64122a2201602d34ee21956f419853990684c7327e7"
+  },
+  "id": "ZVaUuEHOS5GQ2uSc",
+  "tags": [
+    {
+      "updatedAt": "2026-05-24T05:40:30.612Z",
+      "createdAt": "2026-05-24T05:40:30.612Z",
+      "id": "z2uzxgF77bP23aCP",
+      "name": "Project 3"
+    }
+  ]
+}
